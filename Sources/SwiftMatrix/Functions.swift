@@ -13,6 +13,14 @@ public func log (_ rhs : Matrix ) -> Matrix {
     return withMatrix(rhs) { vvlog( $0, $1, $2) }
 }
 
+public func log2 (_ rhs : Matrix ) -> Matrix {
+    return withMatrix(rhs) { vvlog2( $0, $1, $2) }
+}
+
+public func log10 (_ rhs : Matrix ) -> Matrix {
+    return withMatrix(rhs) { vvlog10( $0, $1, $2) }
+}
+
 public func exp (_ rhs : Matrix ) -> Matrix {
     return withMatrix(rhs) { vvexp( $0, $1, $2) }
 }
@@ -96,13 +104,13 @@ public func Σ(_ lhs: Matrix, _ axes: MatrixAxes = .column) -> Matrix {
     case .column:
         var result = Matrix(rows: 1, columns: lhs.columns, repeatedValue: 0.0)
         for i in 0..<lhs.columns {
-            result.values[i] = vDSP.sum(lhs[.all,i])
+            result.values[i] = vDSP.sum(lhs[.all,i].values)
         }
         return result
     case .row:
         var result = Matrix(rows: lhs.rows, columns: 1, repeatedValue: 0.0)
         for i in 0..<lhs.rows {
-            result.values[i] = vDSP.sum(lhs[i, .all])
+            result.values[i] = vDSP.sum(lhs[i, .all].values)
         }
         return result
     }

@@ -118,39 +118,39 @@ public struct Matrix : CustomStringConvertible {
         }
     }
     
-    public subscript(row: Int, column : MatrixVectorSelection? = .all ) -> [Double] {
+    public subscript(row: Int, column : MatrixVectorSelection? = .all ) -> Matrix {
         get {
             assert(row < rows)
             let startIndex = row * columns
             let endIndex = row * columns + columns
-            return Array(values[startIndex..<endIndex])
+            return Matrix(rows:1, columns: columns, values: Array(values[startIndex..<endIndex]))
         }
 
         set {
             assert(row < rows)
-            assert(newValue.count == columns)
+            assert(newValue.values.count == columns)
             let startIndex = row * columns
             let endIndex = row * columns + columns
-            values.replaceSubrange(startIndex..<endIndex, with: newValue)
+            values.replaceSubrange(startIndex..<endIndex, with: newValue.values)
         }
     }
 
-    public subscript(row : MatrixVectorSelection? = .all, column: Int) -> [Double] {
+    public subscript(row : MatrixVectorSelection? = .all, column: Int) -> Matrix {
         get {
             var result = [Double](repeating: 0.0, count: rows)
             for i in 0..<rows {
                 let index = i * columns + column
                 result[i] = self.values[index]
             }
-            return result
+            return Matrix(rows:rows, columns: 1, values: result)
         }
 
         set {
             assert(column < columns)
-            assert(newValue.count == rows)
+            assert(newValue.values.count == rows)
             for i in 0..<rows {
                 let index = i * columns + column
-                values[index] = newValue[i]
+                values[index] = newValue[i,0]
             }
         }
     }
