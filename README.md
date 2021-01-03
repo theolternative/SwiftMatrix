@@ -30,6 +30,7 @@ let dotProduct = A°B
 ```
 
 SwiftMatrix supports following element-wise operations:
+- comparison
 - basic arithmetic: addition, subtraction, multiplication, division, power and square root
 - logarithms and exponent
 - trigonometric and hyperbolic functions
@@ -68,8 +69,20 @@ X[.all,0]=X[.all,1]
 X[0,.all]=X[1,.all]
 ```
 
+### Comparison
+Equatable == is available and returns a boolean value
+<, <=, >, >= between matrices A and B of same sizes are supported and return a matrix C of same size where  C[i,j] = 1.0 if A[i,j] `op` B[i,j] is true, 0.0 otherwise 
+
+```swift
+let X = Matrix.random(rows: 3, columns: 3)
+let Y = Matrix.random(rows: 3, columns: 3)
+let Z = X < Y
+```
+
 ### Arithmetic
 +, -, *, /, ^ and √ are supported
++=, -=, *=, /= compound assignments are supported
+Vector broadcasting is available for +, -, *, / 
 
 ```swift
 let X = Matrix.diagonal(rows: 5, columns: 5, repeatedValue: 1.0)
@@ -79,7 +92,7 @@ Z = Z + 1.0
 Z = 1.0 + X
 Z = X + X[.all, 1] // Broadcasting vector 
 Z = X * Y - Y / X
-Z *= Z // unary assignments are supported
+Z *= Z 
 Z = X^Y
 Z = √Z
 ```

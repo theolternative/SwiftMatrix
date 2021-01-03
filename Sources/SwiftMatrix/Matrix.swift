@@ -180,6 +180,43 @@ public struct Matrix : CustomStringConvertible {
         return description
     }
 }
+
+// MARK: - Comparison
+
+extension Matrix: Equatable {}
+
+public func == (lhs: Matrix, rhs: Matrix) -> Bool {
+    return lhs.rows == rhs.rows && lhs.columns == rhs.columns && lhs.values == rhs.values
+}
+
+public func < (lhs: Matrix, rhs: Matrix) -> Matrix {
+    precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
+    var result = lhs
+    result.values = zip(lhs.values, rhs.values).map { ($0 < $1) ? 1.0 : 0.0 }
+    return result
+}
+
+public func <= (lhs: Matrix, rhs: Matrix) -> Matrix {
+    precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
+    var result = lhs
+    result.values = zip(lhs.values, rhs.values).map { ($0 <= $1) ? 1.0 : 0.0 }
+    return result
+}
+
+public func > (lhs: Matrix, rhs: Matrix) -> Matrix {
+    precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
+    var result = lhs
+    result.values = zip(lhs.values, rhs.values).map { ($0 > $1) ? 1.0 : 0.0 }
+    return result
+}
+
+public func >= (lhs: Matrix, rhs: Matrix) -> Matrix {
+    precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
+    var result = lhs
+    result.values = zip(lhs.values, rhs.values).map { ($0 >= $1) ? 1.0 : 0.0 }
+    return result
+}
+
 // MARK: - Operations
 
 postfix operator ′
