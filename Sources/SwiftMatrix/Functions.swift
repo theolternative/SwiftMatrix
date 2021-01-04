@@ -90,12 +90,8 @@ public func max( _ lhs : Matrix ) -> Double {
 }
 
 public func maxel (_ lhs: Double, _ rhs: Matrix) -> Matrix {
-    var result = rhs;
-    for i in 0..<rhs.rows {
-        for j in 0..<rhs.columns {
-            result[i,j]=Swift.max(lhs, rhs[i,j])
-        }
-    }
+    var result = rhs
+    result.values = rhs.values.map { Swift.max(lhs, $0) }
     return result
 }
 
