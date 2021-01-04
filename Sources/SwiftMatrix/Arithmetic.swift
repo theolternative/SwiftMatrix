@@ -13,17 +13,22 @@ public func + (lhs: Matrix, rhs:Matrix) -> Matrix {
     return withMatrix(from: lhs) { add(&$0, rhs, 1.0) }
 }
 public func + (lhs: Matrix, rhs:Double) -> Matrix {
-    return withMatrix(from: lhs, scalar: rhs) { add(&$0, $1, 1.0) }
-}
-public func + (lhs: Matrix, rhs:Int) -> Matrix {
-    return withMatrix(from: lhs, scalar: Double(rhs)) { add(&$0, $1, 1.0) }
+    return withMatrix(from: lhs ) { add(&$0, rhs) }
 }
 public func + (lhs: Double, rhs:Matrix) -> Matrix {
     return withMatrix(from: rhs, scalar: lhs) { add(&$0, $1, 1.0) }
 }
-
-public func += (lhs: inout Matrix, rhs:Matrix) {
+public func + (lhs: Matrix, rhs:Int) -> Matrix {
+    return withMatrix(from: lhs ) { add(&$0, Double(rhs)) }
+}
+public func += (lhs: inout Matrix, rhs: Matrix) {
     add( &lhs, rhs, 1.0 )
+}
+public func += (lhs: inout Matrix, rhs: Double ) {
+    add( &lhs, rhs )
+}
+public func += (lhs: inout Matrix, rhs: Int ) {
+    add( &lhs, Double(rhs) )
 }
 
 // MARK: - Subtraction
@@ -32,17 +37,22 @@ public func - (lhs: Matrix, rhs:Matrix) -> Matrix {
     return withMatrix(from: lhs) { add(&$0, rhs, -1.0) }
 }
 public func - (lhs: Matrix, rhs:Double) -> Matrix {
-    return withMatrix(from: lhs, scalar: rhs) { add(&$0, $1, -1.0) }
-}
-public func - (lhs: Matrix, rhs:Int) -> Matrix {
-    return withMatrix(from: lhs, scalar: Double(rhs)) { add(&$0, $1, -1.0) }
+    return withMatrix(from: lhs ) { add(&$0, -rhs) }
 }
 public func - (lhs: Double, rhs:Matrix) -> Matrix {
     return withMatrix(from: -rhs, scalar: lhs) { add(&$0, $1, 1.0) }
 }
-
+public func - (lhs: Matrix, rhs:Int) -> Matrix {
+    return withMatrix(from: lhs ) { add(&$0, Double(-rhs)) }
+}
 public func -= (lhs: inout Matrix, rhs:Matrix) {
     add( &lhs, rhs, -1.0 )
+}
+public func -= (lhs: inout Matrix, rhs: Double ) {
+    add( &lhs, -rhs )
+}
+public func -= (lhs: inout Matrix, rhs: Int ) {
+    add( &lhs, Double(-rhs) )
 }
 
 // MARK: - Multiplication
@@ -51,40 +61,47 @@ public func * (lhs: Matrix, rhs:Matrix) -> Matrix {
     return withMatrix(from: lhs) { mul(&$0, rhs ) }
 }
 public func * (lhs: Matrix, rhs:Double) -> Matrix {
-    return withMatrix(from: lhs, scalar: rhs) { mul(&$0, $1) }
+    return withMatrix(from: lhs ) { mul(&$0, rhs) }
 }
 public func * (lhs: Matrix, rhs:Int) -> Matrix {
-    return withMatrix(from: lhs, scalar: Double(rhs)) { mul(&$0, $1) }
+    return withMatrix(from: lhs ) { mul(&$0, Double(rhs)) }
 }
 public func * (lhs: Double, rhs:Matrix) -> Matrix {
     return withMatrix(from: rhs, scalar: lhs) { mul(&$0, $1) }
 }
-
 public func *= (lhs: inout Matrix, rhs:Matrix) {
     mul( &lhs, rhs )
+}
+public func *= (lhs: inout Matrix, rhs: Double ) {
+    mul( &lhs, rhs )
+}
+public func *= (lhs: inout Matrix, rhs: Int ) {
+    mul( &lhs, Double(rhs) )
 }
 
 // MARK: - Division
 
 
 public func / (lhs: Matrix, rhs:Matrix) -> Matrix {
-    return withMatrix(from: lhs) { mul(&$0, pow(rhs, -1.0) ) }
+    return withMatrix(from: lhs) { div( &$0, rhs ) }
 }
-
 public func / (lhs: Matrix, rhs:Double) -> Matrix {
-    return withMatrix(from: lhs, scalar: rhs) { mul(&$0, pow($1, -1.0)) }
+    return withMatrix(from: lhs) { div( &$0, rhs ) }
 }
-
 public func / (lhs: Matrix, rhs:Int) -> Matrix {
-    return withMatrix(from: lhs, scalar: Double(rhs)) { mul(&$0, pow($1, -1.0)) }
+    return withMatrix(from: lhs ) { div(&$0, Double(rhs)) }
 }
-
 public func / (lhs: Double, rhs:Matrix) -> Matrix {
     return withMatrix(from: pow(rhs, -1.0), scalar: lhs) { mul(&$0, $1) }
 }
-
 public func /= (lhs: inout Matrix, rhs:Matrix) {
-    mul( &lhs, pow(rhs, -1.0) )
+    div( &lhs, rhs)
+}
+public func /= (lhs: inout Matrix, rhs: Double ) {
+    div( &lhs, rhs )
+}
+public func /= (lhs: inout Matrix, rhs: Int ) {
+    div( &lhs, Double(rhs) )
 }
 
 // MARK: - Power
@@ -120,15 +137,17 @@ func withMatrix(from matrix: Matrix, scalar : Double, _ closure: (inout Matrix, 
     return copy
 }
 
+
 func add (_ lhs: inout Matrix, _ rhs: Matrix, _ alpha : Double ) {
     if( lhs.rows != rhs.rows ) {
        if( rhs.rows == 1 ) {
             if( lhs.columns == rhs.columns ) {
-                let broadcastedRhs = Matrix(rowVector: rhs, rows: lhs.rows )
-                let valuesCount = Int32(lhs.values.count)
+                let valuesCount = Int32(rhs.values.count)
                 lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
-                    broadcastedRhs.values.withUnsafeBufferPointer { rhsPtr in
-                        cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1)
+                    for i in 0..<lhs.rows {
+                        rhs.values.withUnsafeBufferPointer { rhsPtr in
+                            cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i*lhs.columns, 1)
+                        }
                     }
                 }
                 return
@@ -138,12 +157,13 @@ func add (_ lhs: inout Matrix, _ rhs: Matrix, _ alpha : Double ) {
         }
     } else if( lhs.columns != rhs.columns ) {
         if( rhs.columns == 1 ) {
-             let broadcastedRhs = Matrix(columnVector: rhs, columns: lhs.columns )
-             let valuesCount = Int32(lhs.values.count)
+             let valuesCount = Int32(rhs.values.count)
              lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
-                 broadcastedRhs.values.withUnsafeBufferPointer { rhsPtr in
-                     cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1)
-                 }
+                for i in 0..<lhs.columns {
+                    rhs.values.withUnsafeBufferPointer { rhsPtr in
+                        cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i, Int32(lhs.rows))
+                    }
+                }
              }
             return
          }
@@ -157,15 +177,24 @@ func add (_ lhs: inout Matrix, _ rhs: Matrix, _ alpha : Double ) {
     }
 }
 
+func add (_ lhs : inout Matrix, _ rhs : Double ) {
+    let valuesCount = UInt(lhs.values.count)
+    var copy = rhs
+    lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+        vDSP_vsaddD(lhsPtr.baseAddress!, 1, &copy, lhsPtr.baseAddress!, 1, valuesCount)
+    }
+}
+
 func mul (_ lhs: inout Matrix, _ rhs: Matrix  ) {
     if( lhs.rows != rhs.rows ) {
        if( rhs.rows == 1 ) {
             if( lhs.columns == rhs.columns ) {
-                let broadcastedRhs = Matrix(rowVector: rhs, rows: lhs.rows )
-                let valuesCount = UInt(lhs.values.count)
+                let valuesCount = UInt(rhs.values.count)
                 lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
-                    broadcastedRhs.values.withUnsafeBufferPointer { rhsPtr in
-                        vDSP_vmulD(lhsPtr.baseAddress!, 1, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1, valuesCount)
+                    for i in 0..<lhs.rows {
+                        rhs.values.withUnsafeBufferPointer { rhsPtr in
+                            vDSP_vmulD(lhsPtr.baseAddress!+i*lhs.columns, 1, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i*lhs.columns, 1, valuesCount)
+                        }
                     }
                 }
                 return
@@ -175,12 +204,13 @@ func mul (_ lhs: inout Matrix, _ rhs: Matrix  ) {
         }
     } else if( lhs.columns != rhs.columns ) {
         if( rhs.columns == 1 ) {
-             let broadcastedRhs = Matrix(columnVector: rhs, columns: lhs.columns )
-                let valuesCount = UInt(lhs.values.count)
-             lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
-                 broadcastedRhs.values.withUnsafeBufferPointer { rhsPtr in
-                    vDSP_vmulD(lhsPtr.baseAddress!, 1, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1, valuesCount)
-                 }
+            let valuesCount = UInt(rhs.values.count)
+            lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+                for i in 0..<lhs.columns {
+                    rhs.values.withUnsafeBufferPointer { rhsPtr in
+                        vDSP_vmulD(lhsPtr.baseAddress!+i, Int(lhs.rows), rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i, Int(lhs.rows), valuesCount)
+                    }
+                }
              }
             return
          }
@@ -192,6 +222,61 @@ func mul (_ lhs: inout Matrix, _ rhs: Matrix  ) {
         rhs.values.withUnsafeBufferPointer { rhsPtr in
             vDSP_vmulD(lhsPtr.baseAddress!, 1, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1, valuesCount)
         }
+    }
+}
+
+func mul (_ lhs : inout Matrix, _ rhs : Double ) {
+    let valuesCount = UInt(lhs.values.count)
+    var copy = rhs
+    lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+        vDSP_vsmulD(lhsPtr.baseAddress!, 1, &copy, lhsPtr.baseAddress!, 1, valuesCount)
+    }
+}
+
+func div (_ lhs : inout Matrix, _ rhs : Matrix ) {
+    if( lhs.rows != rhs.rows ) {
+       if( rhs.rows == 1 ) {
+            if( lhs.columns == rhs.columns ) {
+                let valuesCount = UInt(rhs.values.count)
+                lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+                    for i in 0..<lhs.rows {
+                        rhs.values.withUnsafeBufferPointer { rhsPtr in
+                            vDSP_vdivD(rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i*lhs.columns, 1, lhsPtr.baseAddress!+i*lhs.columns, 1, valuesCount)
+                        }
+                    }
+                }
+                return
+            } else {
+                precondition(lhs.rows == rhs.rows, "Matrix dimensions mismatch")
+            }
+        }
+    } else if( lhs.columns != rhs.columns ) {
+        if( rhs.columns == 1 ) {
+            let valuesCount = UInt(rhs.values.count)
+            lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+                for i in 0..<lhs.columns {
+                    rhs.values.withUnsafeBufferPointer { rhsPtr in
+                        vDSP_vdivD(rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i, Int(lhs.rows), lhsPtr.baseAddress!+i, Int(lhs.rows), valuesCount)
+                    }
+                }
+             }
+            return
+         }
+    }
+
+    let valuesCount = UInt(lhs.values.count)
+    lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+        rhs.values.withUnsafeBufferPointer { rhsPtr in
+            vDSP_vdivD(rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1, lhsPtr.baseAddress!, 1, valuesCount)
+        }
+    }
+}
+
+func div (_ lhs : inout Matrix, _ rhs : Double ) {
+    let valuesCount = UInt(lhs.values.count)
+    var copy = rhs
+    lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
+        vDSP_vsdivD(lhsPtr.baseAddress!, 1, &copy, lhsPtr.baseAddress!, 1, valuesCount)
     }
 }
 

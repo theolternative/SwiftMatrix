@@ -159,3 +159,8 @@ let Y = X ° X′
 let Z = Σ(Y, .row)
 ```
 
+### Performance
+Dot product uses `cblas_dgemm` BLAS library function
+Addition and subtraction between 2 matrices use `cblas_daxpy` BLAS library function which has been proved to be faster than vDSP counterpars  `vDSP_vaddD`  and `vDSP_vsubD`
+Division and multiplication between matrices use `vDSP_vmulD` and `vDSP_vdivD`
+Addition, subtraction, division and multiplication between matrix and scalar use `vDSP.add`, `vDSP.subtract`, `vDSP.divide` and `vDSP.multiply` which are faster than `vDSP_vsaddD`, `vDSP_vssubD`, `vDSP_vsdivD` and `vDSP_vsmulD`
