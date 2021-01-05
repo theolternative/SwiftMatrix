@@ -161,11 +161,22 @@ final class SwiftMatrixTests: XCTestCase {
         XCTAssertEqual(X[0,0], 0.125)
         XCTAssertEqual(X[2,0], 0.0)
     }
-
+    func testΣ() {
+        let A = Matrix([[1,2,3],[3,4,5],[6,7,8]])
+        let B = Σ(A, .column)
+        XCTAssertEqual(B[0,0], 10)
+        XCTAssertEqual(B[0,2], 16)
+        let C = Σ(A, .row)
+        XCTAssertEqual(C[0,0], 6)
+        XCTAssertEqual(C[2,0], 21)
+        let D = Σ(A, .both)
+        XCTAssertEqual(D[0,0], 39)
+    }
     static var allTests = [
         ("Addition Test", testAddition),
         ("Subtraction Test", testSubtraction),
         ("Multiplication Test", testMultiplication),
         ("Division Test", testDivision),
+        ("test Σ", testΣ),
     ]
 }

@@ -10,6 +10,7 @@ import Accelerate
 public enum MatrixAxes {
     case row
     case column
+    case both
 }
 
 public enum MatrixVectorSelection {

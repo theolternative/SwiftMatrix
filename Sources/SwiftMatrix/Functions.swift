@@ -109,5 +109,8 @@ public func Σ(_ lhs: Matrix, _ axes: MatrixAxes = .column) -> Matrix {
             result.values[i] = vDSP.sum(lhs[i, .all].values)
         }
         return result
+    case .both:
+        let result = vDSP.sum(lhs.values)
+        return Matrix([[result]])
     }
 }
