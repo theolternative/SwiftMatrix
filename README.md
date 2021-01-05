@@ -72,11 +72,14 @@ X[0,.all]=X[1,.all]
 ### Comparison
 Equatable == is available and returns a boolean value
 <, <=, >, >= between matrices A and B of same sizes are supported and return a matrix C of same size where  C[i,j] = 1.0 if A[i,j] `op` B[i,j] is true, 0.0 otherwise 
+<, <=, >, >= between matrix A and scalar B are supported and return a matrix C of same size of B where  C[i,j] = 1.0 if A[i,j] `op` B is true, 0.0 otherwise 
+
 
 ```swift
 let X = Matrix.random(rows: 3, columns: 3)
 let Y = Matrix.random(rows: 3, columns: 3)
-let Z = X < Y
+let V = X < Y
+let Z = X < 1.0
 ```
 
 ### Arithmetic
