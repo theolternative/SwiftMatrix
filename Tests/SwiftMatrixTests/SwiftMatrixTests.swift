@@ -161,6 +161,28 @@ final class SwiftMatrixTests: XCTestCase {
         XCTAssertEqual(X[0,0], 0.125)
         XCTAssertEqual(X[2,0], 0.0)
     }
+    func testComparison() {
+        let A = Matrix([[0,1],[2,3],[4,5]])
+        let B = Matrix([[5,4],[3,2],[1,0]])
+        let L = A < B
+        XCTAssertEqual(L, Matrix([[1,1],[1,0],[0,0]]))
+        let LE = A <= B
+        XCTAssertEqual(LE, Matrix([[1,1],[1,0],[0,0]]))
+        let G = A > B
+        XCTAssertEqual(G, Matrix([[0,0],[0,1],[1,1]]))
+        let GE = A >= B
+        XCTAssertEqual(GE, Matrix([[0,0],[0,1],[1,1]]))
+        let Eq = B == B
+        XCTAssertEqual(Eq, true)
+        let Ln = A < 3.0
+        XCTAssertEqual(Ln, Matrix([[1,1],[1,0],[0,0]]))
+        let LEn = A <= 3.0
+        XCTAssertEqual(LEn, Matrix([[1,1],[1,1],[0,0]]))
+        let Gn = A > 3.0
+        XCTAssertEqual(Gn, Matrix([[0,0],[0,0],[1,1]]))
+        let GEn = A >= 3.0
+        XCTAssertEqual(GEn, Matrix([[0,0],[0,1],[1,1]]))
+    }
     func testΣ() {
         let A = Matrix([[1,2,3],[3,4,5],[6,7,8]])
         let B = Σ(A, .column)
@@ -172,11 +194,13 @@ final class SwiftMatrixTests: XCTestCase {
         let D = Σ(A, .both)
         XCTAssertEqual(D[0,0], 39)
     }
+    
     static var allTests = [
         ("Addition Test", testAddition),
         ("Subtraction Test", testSubtraction),
         ("Multiplication Test", testMultiplication),
         ("Division Test", testDivision),
-        ("test Σ", testΣ),
+        ("Compariszon Test", testComparison),
+        ("Σ Test", testΣ),
     ]
 }

@@ -197,10 +197,22 @@ public func < (lhs: Matrix, rhs: Matrix) -> Matrix {
     return result
 }
 
+public func < (lhs: Matrix, rhs: Double) -> Matrix {
+    var result = lhs
+    result.values = lhs.values.map { ($0 < rhs) ? 1.0 : 0.0 }
+    return result
+}
+
 public func <= (lhs: Matrix, rhs: Matrix) -> Matrix {
     precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
     var result = lhs
     result.values = zip(lhs.values, rhs.values).map { ($0 <= $1) ? 1.0 : 0.0 }
+    return result
+}
+
+public func <= (lhs: Matrix, rhs: Double) -> Matrix {
+    var result = lhs
+    result.values = lhs.values.map { ($0 <= rhs) ? 1.0 : 0.0 }
     return result
 }
 
@@ -211,10 +223,22 @@ public func > (lhs: Matrix, rhs: Matrix) -> Matrix {
     return result
 }
 
+public func > (lhs: Matrix, rhs: Double) -> Matrix {
+    var result = lhs
+    result.values = lhs.values.map { ($0 > rhs) ? 1.0 : 0.0 }
+    return result
+}
+
 public func >= (lhs: Matrix, rhs: Matrix) -> Matrix {
     precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "Matrix dimensions mismatch")
     var result = lhs
     result.values = zip(lhs.values, rhs.values).map { ($0 >= $1) ? 1.0 : 0.0 }
+    return result
+}
+
+public func >= (lhs: Matrix, rhs: Double) -> Matrix {
+    var result = lhs
+    result.values = lhs.values.map { ($0 >= rhs) ? 1.0 : 0.0 }
     return result
 }
 
