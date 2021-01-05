@@ -151,7 +151,7 @@ let Z = maxel(1.0, Y)
 Dot product, transpose and sum of rows/columns are supported
 - `Matrix` °  `Matrix` : dot product
 -  `Matrix`′ : transpose
-- Σ(`Matrix`, `.row|.column`) : vector containing sum of rows/columns
+- Σ(`Matrix`, `.row|.column|.both`) : matrix containing sum of rows/columns/all elements
 
 ```swift
 let X = Matrix.random(rows: 4, columns: 3)
