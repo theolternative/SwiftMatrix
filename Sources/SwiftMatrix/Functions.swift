@@ -95,6 +95,12 @@ public func maxel (_ lhs: Double, _ rhs: Matrix) -> Matrix {
     return result
 }
 
+public func minel (_ lhs: Double, _ rhs: Matrix) -> Matrix {
+    var result = rhs
+    result.values = rhs.values.map { Swift.min(lhs, $0) }
+    return result
+}
+
 public func Σ(_ lhs: Matrix, _ axes: MatrixAxes = .column) -> Matrix {
     switch axes {
     case .column:
