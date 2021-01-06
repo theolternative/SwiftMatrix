@@ -194,13 +194,30 @@ final class SwiftMatrixTests: XCTestCase {
         let D = Σ(A, .both)
         XCTAssertEqual(D[0,0], 39)
     }
+    func testShuffle() {
+        let A = Matrix([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]])
+        print(shuffle(A, .row))
+        print(shuffle(A, .column))
+    }
     
+    func testMinMax() {
+        let A = Matrix([[1,2,3],[3,4,5],[6,7,8]])
+        let B = min(A)
+        XCTAssertEqual(B, 1)
+        let C = max(A)
+        XCTAssertEqual(C, 8)
+        let D = maxel(3.0, A)
+        XCTAssertEqual(D[0,0], 3.0)
+        let E = minel(3.0, A)
+        XCTAssertEqual(E[2,0], 3.0)
+    }
+
     static var allTests = [
         ("Addition Test", testAddition),
         ("Subtraction Test", testSubtraction),
         ("Multiplication Test", testMultiplication),
         ("Division Test", testDivision),
-        ("Compariszon Test", testComparison),
+        ("Comparison Test", testComparison),
         ("Σ Test", testΣ),
     ]
 }

@@ -101,6 +101,28 @@ public func minel (_ lhs: Double, _ rhs: Matrix) -> Matrix {
     return result
 }
 
+public func shuffle( _ A : Matrix, _ type : MatrixAxes ) -> Matrix {
+    var B = A
+
+    switch( type ) {
+    case .column:
+        let m = Array((0...(A.columns-1)).shuffled())
+        for i in 0..<m.count {
+            B[.all, i] = A[.all, m[i]]
+        }
+        break
+    case .row:
+        let m = Array((0...(A.rows-1)).shuffled())
+        for i in 0..<m.count {
+            B[i, .all] = A[m[i], .all]
+        }
+        break
+    default:
+        break
+    }
+    return B
+}
+
 public func Σ(_ lhs: Matrix, _ axes: MatrixAxes = .column) -> Matrix {
     switch axes {
     case .column:
