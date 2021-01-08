@@ -211,7 +211,6 @@ final class SwiftMatrixTests: XCTestCase {
         let E = minel(3.0, A)
         XCTAssertEqual(E[2,0], 3.0)
     }
-
     static var allTests = [
         ("Addition Test", testAddition),
         ("Subtraction Test", testSubtraction),

@@ -144,6 +144,8 @@ Some statistical functions are supported
 - min(`Matrix`)  : returns minimum value across all elements
 - max(`Matrix`)  : returns maximm value across all elements
 - maxel(`z: Double`, `Matrix`) : returns a matrix M where M[i,j]=max(z, M[i,j])
+- minel(`z: Double`, `Matrix`) : returns a matrix M where M[i,j]=min(z, M[i,j])
+- shuffle(`Matrix`, `.row|.column`) : returns a matrix M with rows or columns shuffled
 
 ```swift
 let X = Matrix.random(rows: 4, columns: 3)

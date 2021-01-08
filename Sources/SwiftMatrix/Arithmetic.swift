@@ -161,7 +161,7 @@ func add (_ lhs: inout Matrix, _ rhs: Matrix, _ alpha : Double ) {
              lhs.values.withUnsafeMutableBufferPointer { lhsPtr in
                 for i in 0..<lhs.columns {
                     rhs.values.withUnsafeBufferPointer { rhsPtr in
-                        cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i, Int32(lhs.rows))
+                        cblas_daxpy(valuesCount, alpha, rhsPtr.baseAddress!, 1, lhsPtr.baseAddress!+i, Int32(lhs.columns))
                     }
                 }
              }
