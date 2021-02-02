@@ -16,6 +16,41 @@ public enum MatrixAxes {
 public enum MatrixVectorSelection {
     case all
 }
+
+public class GaussianRandomGenerator {
+    private var nextNextGaussian: Double? = {
+        srand48(Int(arc4random())) //initialize drand48 buffer at most once
+        return nil
+    }()
+
+    func nextGaussian() -> Double {
+        if let gaussian = nextNextGaussian {
+            nextNextGaussian = nil
+            return gaussian
+        } else {
+            var v1, v2, s: Double
+
+            repeat {
+                v1 = 2 * drand48() - 1
+                v2 = 2 * drand48() - 1
+                s = v1 * v1 + v2 * v2
+            } while s >= 1 || s == 0
+
+            let multiplier = sqrt(-2 * log(s)/s)
+            nextNextGaussian = v2 * multiplier
+            return v1 * multiplier
+        }
+    }
+    
+    func arrayOf(items: Int) -> [Double] {
+        var values : [Double] = [Double].init(repeating: 0, count: items)
+        for index in 0..<items {
+            values[index]=nextGaussian()
+        }
+        return values
+    }
+}
+
 public struct Matrix : CustomStringConvertible {
     
     public let rows : Int
@@ -98,6 +133,13 @@ public struct Matrix : CustomStringConvertible {
         let count =  rows * columns
         var generator = SystemRandomNumberGenerator()
         let values = (0..<count).map { _ in Double.random(in: range, using: &generator) }
+        return Matrix(rows: rows, columns: columns, values: values)
+    }
+
+    public static func gaussianRandom( rows: Int, columns: Int ) -> Matrix {
+        let count =  rows * columns
+        let generator = GaussianRandomGenerator()
+        let values = generator.arrayOf(items: count)
         return Matrix(rows: rows, columns: columns, values: values)
     }
 

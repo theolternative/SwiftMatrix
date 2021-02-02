@@ -211,6 +211,12 @@ final class SwiftMatrixTests: XCTestCase {
         let E = minel(3.0, A)
         XCTAssertEqual(E[2,0], 3.0)
     }
+    func testGaussianRandomGenerator() {
+        let A = Matrix.gaussianRandom(rows: 1000, columns: 1000)
+        let mean = abs(Σ(A, .both)[0,0]/Double(A.rows*A.columns))
+        XCTAssertLessThan(mean, 0.01)
+
+    }
     static var allTests = [
         ("Addition Test", testAddition),
         ("Subtraction Test", testSubtraction),
